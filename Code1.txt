@@ -1,0 +1,143 @@
+#include <iostream>
+using namespace std;
+
+struct node {
+	int data;
+	node* next, * previous;
+	node();
+};
+node::node() {
+	next = previous = NULL;
+}
+
+class linkedList {
+public:
+	linkedList();
+	void insert(const int);
+	void print();
+	int size();
+	bool isEmpty();
+	void removeAfterNode(node*);
+	node* returnCurrentPtr(const int);
+	~linkedList();
+private:
+	node* head;
+	node* tail;
+	int Size;
+};
+linkedList::linkedList() {
+	head = tail = NULL;
+	Size = 0;
+}
+
+void linkedList::insert(int value) {
+	Size++;
+	node* newNode = new node;
+	newNode->data = value;
+	if (tail == NULL && head == NULL) {
+		tail = newNode;
+		head = newNode;
+		newNode->next = newNode;
+		newNode->previous = newNode;
+	}
+	else {
+		tail->next = newNode;
+		newNode->previous = tail;
+		tail = newNode;
+		tail->next = head;
+		head->previous = tail;
+	}
+}
+
+void linkedList::print() {
+	if (!head && !tail) {
+		std::cout << "List is empty\n";
+
+	}
+	else {
+		/*for (linkedList<T>::iterator it = linkedList<T>::begin(); it != linkedList<T>::end(); it++) {
+			std::cout << *it << "->";
+		}
+		std::cout << tail->data << std::endl;*/
+		std::cout << "Print Forward: ";
+		node* temp = head;
+		while (temp->next != head)
+			std::cout << temp->data << ' ', temp = temp->next;
+		std::cout << temp->data << '\n';
+
+	}
+}
+
+int linkedList::size() {
+	return Size;
+}
+
+bool linkedList::isEmpty() {
+	return (head == NULL);
+}
+
+linkedList::~linkedList() {
+	if (head == NULL) {}
+	else if (head == head->next) {
+		delete head;
+	}
+	else {
+		node* temp = head;
+		node* temp2 = temp->next;
+		while (temp != tail) {
+			delete temp;
+			if (temp2 != tail)
+				temp2 = temp2->next;
+			else {
+				delete temp2;
+				break;
+			}
+			temp = temp2->previous;
+		}
+	}
+	head = tail = NULL;
+}
+
+void linkedList::removeAfterNode(node* Node) {
+	if (Node->next == NULL) {
+		return; // No node to remove or next node is NULL
+	}
+	node* temp = Node->next; // Temporarily store the next node
+	Node->next = temp->next; // Update the link to skip the next node
+	delete temp; // Deallocate the memory used by the next node
+}
+
+node* linkedList::returnCurrentPtr(const int data) {
+	node* temp = head;
+	while (temp) {
+		if (temp->data == data)
+			return temp;
+		else
+			temp = temp->next;
+	}
+}
+
+int main() {
+	linkedList obj1;
+
+	//check insert functionalities.
+	obj1.insert(4);
+	obj1.insert(5);
+	obj1.insert(6);
+	obj1.insert(3);
+	obj1.insert(2);
+	obj1.insert(1);
+	obj1.print();
+
+	cout << "Enter data from linked list: ";
+	int data;
+	cin >> data;
+	node* ptr = obj1.returnCurrentPtr(data);//function to get the pointer of any node
+	                                        //which will be current node
+	obj1.removeAfterNode(ptr);
+
+	cout << "After removing element " << data << " from link list: " << endl;
+	obj1.print();
+
+	return 0;
+}
